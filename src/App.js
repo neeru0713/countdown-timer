@@ -1,11 +1,18 @@
 import "./App.css";
 import "./index.css";
+import snd from "./iphone-ringtone.mp3"
 import { Box } from "./Box.js";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 
 function App() {
   const [targetTime, setTargetTime] = useState(new Date().toISOString());
-  const [timeLeft, setTimeLeft] = useState({});
+  const [audio] = useState(new Audio(snd));
+  const [timeLeft, setTimeLeft] = useState({
+    days: 0,
+    hours:0,
+    minutes:0,
+    seconds:0
+  });
   const [countdownStarted, setCountdownStarted] = useState(false);
   const [showMessage, setShowMessage] = useState(false);
   const [message, setMessage] = useState("");
@@ -18,7 +25,10 @@ function App() {
       setShowMessage(true);
       setMessage("The countdown is over! What's next on your adventure?");
       setCountdownStarted(false);
+      audio.play();
     }
+   
+    
     if (difference > 0) {
       timeLeft = {
         days: Math.floor(difference / (1000 * 60 * 60 * 24)),
@@ -40,16 +50,24 @@ function App() {
 
   const handleCancel = () => {
     setCountdownStarted(false);
+    setTimeLeft({
+      days: 0,
+      hours:0,
+      minutes:0,
+      seconds:0
+    })
   };
   
   useEffect(() => {
     console.log("time left changed : ", timeLeft);
+   
   }, [timeLeft]);
 
   useEffect(() => {
     if (countdownStarted) {
       const timerInterval = setInterval(() => {
         setTimeLeft(calculateTimeLeft());
+       
       }, 1000);
 
       return () => {
@@ -60,6 +78,7 @@ function App() {
   }, [countdownStarted]);
 
   const handleStartCountdown = () => {
+    
     setCountdownStarted(true);
   };
   return (
